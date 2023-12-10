@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<!DOCTYPE suppressions PUBLIC
+        "-//Checkstyle//DTD SuppressionFilter Configuration 1.2//EN"
+        "https://checkstyle.org/dtds/suppressions_1_2.dtd">
+
+<suppressions>
+    <!-- Don't apply checkstyles to any xml files, test resources, etc. -->
+    <suppress files="\.xml$|tst/resources/|tst/testData/|\.ion$|\.txt$|\.xlsx$" checks=".*"/>
+    <!-- Don't apply certain checkstyles to unit tests (anything in the tst or src/test/java folder) -->
+    <suppress files="tst/|src/test/java" checks="MethodName|MagicNumber|MultipleStringLiterals|StrictDuplicateCode|ClassFanOutComplexity|JavaNCSS|MethodLength|ExecutableStatementCount|DeclarationOrder" />
+    <!-- Don't apply certain complexity checkstyles to classes that create objects -->
+    <suppress files=".*Config\.java|.*Factory\.java" checks="ClassDataAbstractionCoupling|ClassFanOutComplexity"/>
+</suppressions>
