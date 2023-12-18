@@ -1,0 +1,4 @@
+{
+  name: "gradle-build-tools-dev-container",
+  image: "openjdk:17",
+}
