@@ -8,6 +8,8 @@
 plugins {
     `java-gradle-plugin`
     `maven-publish`
+    id("com.diffplug.spotless") version "6.23.3"
+    checkstyle
 }
 
 gradlePlugin {
@@ -16,6 +18,26 @@ gradlePlugin {
             id = "top.claws.gradle-build-tools"
             implementationClass = "top.claws.GradleBuildToolsPlugin"
         }
+    }
+}
+
+checkstyle {
+    isIgnoreFailures = false
+    configFile = file("${project.rootDir}/src/main/resources/checkstyle.xml")
+    configProperties["checkstyle.suppression.filter"] = file("${project.rootDir}/src/main/resources/suppressions.xml")
+}
+
+spotless {
+    format("misc") {
+        target("*.gradle", ".gitattributes", ".gitignore")
+        trimTrailingWhitespace()
+        indentWithTabs()
+        endWithNewline()
+    }
+    java {
+        googleJavaFormat("1.17.0").aosp().reflowLongStrings().skipJavadocFormatting();
+        formatAnnotations()
+        licenseHeader("/* (C)\$YEAR */")
     }
 }
 
