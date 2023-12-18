@@ -10,15 +10,21 @@ plugins {
     `maven-publish`
     id("com.diffplug.spotless") version "6.23.3"
     checkstyle
+    id("com.gradle.plugin-publish") version "1.2.1"
 }
 
 gradlePlugin {
     plugins {
         create("gradleBuildToolsPlugin") {
             id = "top.claws.gradle-build-tools"
+            displayName = "Gradle Build Tools"
+            description = "Collection of commonly-used build tools for Gradle Java project."
+            tags.set(listOf("build tools"))
             implementationClass = "top.claws.GradleBuildToolsPlugin"
         }
     }
+    website.set("https://github.com/jingjiecb/gradle-build-tools")
+    vcsUrl.set("https://github.com/jingjiecb/gradle-build-tools")
 }
 
 checkstyle {
@@ -51,6 +57,5 @@ repositories {
 
 dependencies {
     implementation("com.diffplug.spotless:spotless-plugin-gradle:6.23.3")
-    // https://mvnrepository.com/artifact/io.freefair.gradle/lombok-plugin
     implementation("io.freefair.gradle:lombok-plugin:8.4")
 }
