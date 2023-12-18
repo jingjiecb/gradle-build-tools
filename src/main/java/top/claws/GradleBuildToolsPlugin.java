@@ -3,12 +3,14 @@ package top.claws;
 
 import com.diffplug.gradle.spotless.SpotlessExtension;
 import com.diffplug.gradle.spotless.SpotlessPlugin;
+import io.freefair.gradle.plugins.lombok.LombokPlugin;
 import java.math.BigDecimal;
 import java.net.URL;
 import java.util.List;
 import java.util.Map;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
+import org.gradle.api.Task;
 import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.api.plugins.quality.CheckstyleExtension;
 import org.gradle.api.plugins.quality.CheckstylePlugin;
@@ -22,9 +24,10 @@ public class GradleBuildToolsPlugin implements Plugin<Project> {
     @Override
     public void apply(Project project) {
         createExtension(project);
-        applyCheckstyleToProject(project);
-        applySpotlessToProject(project);
-        applyJacocoToProject(project);
+        applyCheckstyle(project);
+        applySpotless(project);
+        applyJacoco(project);
+        applyLombok(project);
     }
 
     private void createExtension(Project project) {
@@ -32,17 +35,17 @@ public class GradleBuildToolsPlugin implements Plugin<Project> {
                 project.getExtensions().create("gradleBuildTools", GradleBuildToolsExtension.class);
     }
 
-    private void applyCheckstyleToProject(Project project) {
+    private void applyCheckstyle(Project project) {
         project.getPlugins()
                 .withType(
                         JavaPlugin.class,
                         javaPlugin -> {
                             project.getPlugins().apply(CheckstylePlugin.class);
-                            configureCheckstylePlugin(project);
+                            configureCheckstyle(project);
                         });
     }
 
-    private void configureCheckstylePlugin(Project project) {
+    private void configureCheckstyle(Project project) {
         CheckstyleExtension checkstyle =
                 project.getExtensions().findByType(CheckstyleExtension.class);
         if (checkstyle != null) {
@@ -59,17 +62,23 @@ public class GradleBuildToolsPlugin implements Plugin<Project> {
         }
     }
 
-    private void applySpotlessToProject(Project project) {
+    private void applySpotless(Project project) {
         project.getPlugins()
                 .withType(
                         JavaPlugin.class,
                         javaPlugin -> {
                             project.getPlugins().apply(SpotlessPlugin.class);
-                            configureSpotlessToProject(project);
+                            configureSpotless(project);
+                            createFormatTask(project);
                         });
     }
 
-    private void configureSpotlessToProject(Project project) {
+    private void createFormatTask(Project project) {
+        Task formatTask = project.getTasks().create("format");
+        formatTask.dependsOn("spotlessApply");
+    }
+
+    private void configureSpotless(Project project) {
         SpotlessExtension spotless = project.getExtensions().findByType(SpotlessExtension.class);
         if (spotless != null) {
             spotless.format(
@@ -93,17 +102,17 @@ public class GradleBuildToolsPlugin implements Plugin<Project> {
         }
     }
 
-    private void applyJacocoToProject(Project project) {
+    private void applyJacoco(Project project) {
         project.getPlugins()
                 .withType(
                         JavaPlugin.class,
                         javaPlugin -> {
                             project.getPlugins().apply(JacocoPlugin.class);
-                            configureJacocoToProject(project);
+                            configureJacoco(project);
                         });
     }
 
-    private void configureJacocoToProject(Project project) {
+    private void configureJacoco(Project project) {
         project.getTasks()
                 .withType(JacocoReport.class)
                 .configureEach(
@@ -177,5 +186,14 @@ public class GradleBuildToolsPlugin implements Plugin<Project> {
                         task -> {
                             task.dependsOn("jacocoTestCoverageVerification");
                         });
+    }
+
+    private void applyLombok(Project project) {
+        project.getPlugins().apply(LombokPlugin.class);
+        configureLombok(project);
+    }
+
+    private void configureLombok(Project project) {
+        project.getTasks().register("copyDefaultLombokConfig", CopyLombokConfigTask.class);
     }
 }

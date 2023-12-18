@@ -51,4 +51,6 @@ repositories {
 
 dependencies {
     implementation("com.diffplug.spotless:spotless-plugin-gradle:6.23.3")
+    // https://mvnrepository.com/artifact/io.freefair.gradle/lombok-plugin
+    implementation("io.freefair.gradle:lombok-plugin:8.4")
 }
